@@ -90,19 +90,20 @@ export default MyCustomComposition;
                 </div>
             </div>
 
-            <div className="player-container" style={{ height }}>
+            <div className="player-container">
                 <Player
                     component={component}
                     durationInFrames={durationInFrames}
-                    compositionWidth={600}
-                    compositionHeight={height}
+                    compositionWidth={1200}
+                    compositionHeight={height * 2}
                     fps={30}
                     controls
                     loop
                     inputProps={inputProps}
                     style={{
                         width: '100%',
-                        height: '100%',
+                        aspectRatio: '16/9',
+                        height: 'auto'
                     }}
                 />
             </div>

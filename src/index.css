@@ -1,14 +1,16 @@
 :root {
-  --bg-dark: #0f172a;
-  --bg-card: #1e293b;
+  --bg-dark: #020617;
+  --bg-card: #0f172a;
   --bg-sidebar: #020617;
-  --accent: #3b82f6; /* Blue-500 */
-  --accent-glow: rgba(59, 130, 246, 0.5);
+  --accent: #3b82f6;
+  --accent-glow: rgba(59, 130, 246, 0.4);
   --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
-  --border: #334155;
+  --border: rgba(255, 255, 255, 0.08);
   
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --sidebar-width: 280px;
+  --mobile-nav-height: 70px;
 }
 
 body {
@@ -16,45 +18,40 @@ body {
   font-family: var(--font-sans);
   background-color: var(--bg-dark);
   color: var(--text-primary);
-  overflow: hidden; /* App-like feel */
-}
-
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: var(--bg-dark);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--text-secondary);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Utilities */
 .glass-panel {
-  background: rgba(30, 41, 59, 0.7);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
 }
 
 .title-gradient {
-  background: linear-gradient(to right, #60a5fa, #a78bfa);
+  background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-size: 200% 200%;
+  animation: gradient-move 5s ease infinite;
 }
 
-.flex-center {
+@keyframes gradient-move {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Responsive Grid System */
+.app-container {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  min-height: 100vh;
 }
 
-/* Reset buttons */
-button {
-  cursor: pointer;
+@media (max-width: 768px) {
+  .app-container {
+    flex-direction: column;
+  }
 }
