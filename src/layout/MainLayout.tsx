@@ -24,13 +24,26 @@ interface MainLayoutProps {
     activeCategory: string;
     onSelectCategory: (id: string) => void;
 }
-
 export const MainLayout: React.FC<MainLayoutProps> = ({ children, activeCategory, onSelectCategory }) => {
     const { t, language, toggleLanguage } = useLanguage();
 
     return (
         <div className="app-container">
+            {/* Mobile Header */}
+            <header className="mobile-header glass-panel">
+                <div className="logo-area-mobile">
+                    <span className="logo-icon">🎬</span>
+                    <h1 className="app-title title-gradient">MotionCheat</h1>
+                </div>
+                <button onClick={toggleLanguage} className="lang-toggle-mobile">
+                    <Globe size={18} />
+                    <span>{language.toUpperCase()}</span>
+                </button>
+            </header>
+
             <aside className="sidebar glass-panel">
+...
+
                 <div className="logo-area">
                     <span className="logo-icon">🎬</span>
                     <h1 className="app-title title-gradient">MotionCheat</h1>
