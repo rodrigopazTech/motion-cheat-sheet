@@ -14,9 +14,10 @@ function AppContent() {
   const { t } = useLanguage();
 
   return (
-    <MainLayout activeCategory={category} onSelectCategory={setCategory}>
-      <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-        <h2 className="title-gradient" style={{ fontSize: '32px', marginBottom: '8px' }}>
+  <MainLayout activeCategory={category} onSelectCategory={setCategory}>
+    <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+      <div style={{ marginBottom: '20px', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '16px' }}>
+        <h2 className="title-gradient" style={{ fontSize: '24px', marginBottom: '4px', marginTop: '0' }}>
           {category === 'basics' && t('nav.basics')}
           {category === 'easing' && t('nav.easing')}
           {category === '3d' && t('nav.3d')}
@@ -25,11 +26,13 @@ function AppContent() {
           {category === 'typography' && t('nav.typography')}
           {category === 'audio' && t('nav.audio')}
         </h2>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '18px', marginBottom: '32px' }}>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '14px', margin: '0', opacity: 0.8 }}>
           {t('app.subtitle')}
         </p>
+      </div>
 
-        {category === 'basics' && <BasicsContent />}
+      {category === 'basics' && <BasicsContent />}
+
         {category === 'easing' && <EasingContent />}
         {category === '3d' && <ThreeDContent />}
         {category === 'springs' && <SpringsContent />}
