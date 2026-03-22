@@ -1,13 +1,20 @@
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame } from 'remotion';
-
 export const ThreeDCardFlip: React.FC<{
     perspective: number;
     rotateX: number;
     rotateY: number;
     color: string;
     glow: number;
-}> = ({ perspective, rotateX, rotateY, color, glow }) => {
+    float: number;
+}> = ({ perspective, rotateX, rotateY, color, glow, float }) => {
+    const frame = useCurrentFrame();
+
+    // Animación de flotación: Oscilación vertical y balanceo sutil
+    const translateY = Math.sin(frame / 15) * 20 * float;
+    const extraRotateX = Math.cos(frame / 20) * 5 * float;
+    const extraRotateY = Math.sin(frame / 25) * 5 * float;
+
     return (
         <AbsoluteFill
             style={{
@@ -28,13 +35,15 @@ export const ThreeDCardFlip: React.FC<{
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    boxShadow: `0 20px 50px rgba(0,0,0,0.5), 0 0 ${glow * 40}px ${color}`,
+                    boxShadow: `0 ${20 + translateY}px 50px rgba(0,0,0,0.5), 0 0 ${glow * 40}px ${color}`,
                     transformStyle: 'preserve-3d',
-                    transform: `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
+                    transform: `translateY(${translateY}px) rotateX(${rotateX + extraRotateX}deg) rotateY(${rotateY + extraRotateY}deg)`,
                     border: '1px solid rgba(255,255,255,0.1)',
                     transition: 'transform 0.1s ease-out'
                 }}
             >
+...
+
                 <div style={{
                     fontSize: 32,
                     fontWeight: '900',

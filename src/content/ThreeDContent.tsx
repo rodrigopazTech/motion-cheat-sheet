@@ -3,7 +3,7 @@ import { ConceptCard } from '../components/ConceptCard';
 import { ThreeDCardFlip } from '../compositions/ThreeDCardFlip';
 import { ThreeDOrbital } from '../compositions/ThreeDOrbital';
 import { useLanguage } from '../i18n/LanguageContext';
-import { Move3d, Box, Sun, Settings2 } from 'lucide-react';
+import { Move3d, Box, Sun, Settings2, Activity } from 'lucide-react';
 
 export const ThreeDContent: React.FC = () => {
     const [perspective, setPerspective] = useState(800);
@@ -11,6 +11,7 @@ export const ThreeDContent: React.FC = () => {
     const [rotateY, setRotateY] = useState(-20);
     const [materialColor, setMaterialColor] = useState('#ec4899');
     const [glowIntensity, setGlowIntensity] = useState(0.5);
+    const [floatIntensity, setFloatIntensity] = useState(0.3);
     
     const [orbitRadius, setOrbitRadius] = useState(150);
     const [orbitSpeed, setOrbitSpeed] = useState(2);
@@ -29,12 +30,13 @@ export const ThreeDContent: React.FC = () => {
                     rotateX, 
                     rotateY, 
                     color: materialColor,
-                    glow: glowIntensity 
+                    glow: glowIntensity,
+                    float: floatIntensity
                 }}
                 durationInFrames={120}
                 codeSnippet={`<div style={{ 
   perspective: ${perspective}px,
-  transform: "rotateX(${rotateX}deg) rotateY(${rotateY}deg)"
+  transform: "rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(\${floatOffset}px)"
 }}>
   <div style={{ backgroundColor: "${materialColor}" }} />
 </div>`}
@@ -78,7 +80,7 @@ export const ThreeDContent: React.FC = () => {
 
                         <div className="control-section" style={{ marginTop: '20px' }}>
                             <div className="control-label" style={{ marginBottom: '12px' }}>
-                                <Settings2 size={14} /> <span>Cámara y Perspectiva</span>
+                                <Settings2 size={14} /> <span>Cámara y Efectos</span>
                             </div>
                             <div className="control-group">
                                 <label className="control-label">
@@ -93,6 +95,21 @@ export const ThreeDContent: React.FC = () => {
                                     value={perspective}
                                     style={{ width: '100%' }}
                                     onChange={(e) => setPerspective(Number(e.target.value))}
+                                />
+                            </div>
+                            <div className="control-group" style={{ marginTop: '12px' }}>
+                                <label className="control-label">
+                                    <Activity size={14} /> <span>Intensidad de Flotación</span>
+                                    <span className="control-value">{(floatIntensity * 100).toFixed(0)}%</span>
+                                </label>
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max="1"
+                                    step="0.1"
+                                    value={floatIntensity}
+                                    style={{ width: '100%' }}
+                                    onChange={(e) => setFloatIntensity(Number(e.target.value))}
                                 />
                             </div>
                         </div>
