@@ -1,18 +1,69 @@
 .concept-card {
     border-radius: 20px;
     overflow: hidden;
-    margin-bottom: 32px;
+    margin-bottom: 40px;
     border: 1px solid var(--border);
-    background: rgba(30, 41, 59, 0.4);
+    background: rgba(15, 23, 42, 0.4);
     display: flex;
     flex-direction: column;
     transition: transform 0.2s ease;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
+/* DESKTOP SPLIT LAYOUT (Pantallas Grandes) */
+@media (min-width: 1100px) {
+    .concept-card {
+        flex-direction: row;
+        min-height: 500px;
+        align-items: stretch;
+    }
+
+    .card-left {
+        flex: 1.4; /* Player Column */
+        background: #000;
+        display: flex;
+        flex-direction: column;
+        border-right: 1px solid var(--border);
+    }
+
+    .card-right {
+        flex: 1; /* Controls Column */
+        display: flex;
+        flex-direction: column;
+        background: rgba(2, 6, 23, 0.1);
+        overflow-y: auto;
+        max-height: 700px;
+    }
+
+    .player-container {
+        flex: 1;
+        border-bottom: none !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .card-header {
+        border-bottom: 1px solid var(--border);
+        background: rgba(15, 23, 42, 0.2);
+    }
+
+    .controls-area {
+        border-top: none !important;
+        padding: 30px;
+    }
+
+    .code-block {
+        margin: 0 30px 30px 30px !important;
+    }
+}
+
+/* Base Styles (Shared) */
 .card-header {
-    padding: 20px 24px;
+    padding: 24px;
     border-bottom: 1px solid var(--border);
 }
+...
 
 .card-title {
     margin: 0 0 4px 0;
