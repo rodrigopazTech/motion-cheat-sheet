@@ -160,35 +160,43 @@
     .nav-menu {
         flex-direction: row;
         width: 100%;
-        justify-content: space-around;
-        padding: 0;
+        justify-content: space-between;
+        padding: 0 4px;
         gap: 0;
-        overflow-y: hidden;
-        overflow-x: auto;
+        overflow: hidden; /* Evitar scroll si no es necesario */
     }
 
     .nav-item {
+        flex: 1;
+        display: flex;
         flex-direction: column;
-        gap: 4px;
-        padding: 10px 4px;
+        gap: 0;
+        padding: 0;
+        margin: 0;
         align-items: center;
         justify-content: center;
-        min-width: 58px;
-        border-radius: 0;
-        font-size: 10px;
+        min-width: 44px;
+        height: 60px;
+        border-radius: 16px;
         background: transparent !important;
         box-shadow: none !important;
         border: none !important;
         transform: none !important;
     }
 
+    .nav-label {
+        display: none; /* OCULTAR TEXTO LARGO EN MÓVIL */
+    }
+
     .nav-item.active {
         color: var(--accent);
+        background: rgba(59, 130, 246, 0.1) !important; /* Resplandor de fondo suave */
     }
 
     .nav-item svg {
-        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
+
 
     .nav-item.active svg {
         transform: translateY(-2px) scale(1.1);

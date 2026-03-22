@@ -1,5 +1,5 @@
 import React from 'react';
-import { Play, Box, Move, Layers, Globe } from 'lucide-react';
+import { Play, Box, Move, Layers, Globe, Zap, Type, Music } from 'lucide-react';
 import './MainLayout.css';
 import { useLanguage } from '../i18n/LanguageContext';
 
@@ -11,12 +11,12 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
     { id: 'basics', labelKey: 'nav.basics', icon: <Play size={20} /> },
-    { id: 'easing', labelKey: 'nav.easing', icon: <span style={{ fontSize: 20, fontWeight: 'bold' }}>~</span> },
+    { id: 'easing', labelKey: 'nav.easing', icon: <Zap size={20} /> },
     { id: '3d', labelKey: 'nav.3d', icon: <Box size={20} /> },
     { id: 'springs', labelKey: 'nav.springs', icon: <Move size={20} /> },
     { id: 'transitions', labelKey: 'nav.transitions', icon: <Layers size={20} /> },
-    { id: 'typography', labelKey: 'nav.typography', icon: <span style={{ fontSize: 20, fontWeight: 'bold' }}>T</span> },
-    { id: 'audio', labelKey: 'nav.audio', icon: <span style={{ fontSize: 20 }}>🔊</span> },
+    { id: 'typography', labelKey: 'nav.typography', icon: <Type size={20} /> },
+    { id: 'audio', labelKey: 'nav.audio', icon: <Music size={20} /> },
 ];
 
 interface MainLayoutProps {
