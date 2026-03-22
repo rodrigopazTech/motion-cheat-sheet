@@ -7,56 +7,51 @@ const AUDIO_URL = "https://raw.githubusercontent.com/remotion-dev/template-audio
 
 export const AudioVisualization: React.FC<{
     volume: number;
-}> = ({ volume }) => {
+    sensitivity: number;
+    bars: number;
+    color: string;
+}> = ({ volume, sensitivity, bars, color }) => {
     const frame = useCurrentFrame();
     const { fps } = useVideoConfig();
 
-    // Note: For this cheat sheet demo, we simulate the visualization 
-    // to avoid complex CORS/AudioContext setup issues in the browser preview.
-    // In a real app, you would use:
-    // const audioData = useAudioData(AUDIO_URL);
-
-    const numberOfBars = 16;
+    const numberOfBars = bars;
 
     return (
         <AbsoluteFill
             style={{
-                backgroundColor: '#0f172a',
+                backgroundColor: '#020617',
                 justifyContent: 'center',
                 alignItems: 'center',
                 flexDirection: 'row',
-                gap: '4px',
+                gap: bars > 64 ? '1px' : '4px',
+                padding: '40px'
             }}
         >
             <Audio src={AUDIO_URL} volume={volume} />
 
             {Array.from({ length: numberOfBars }).map((_, i) => {
-                // Simulate frequency data using Math.sin and noise
-                // This creates a convincing "beat" effect synchronized nicely enough for a demo.
                 const time = frame / fps;
-                const speed = 5 + i * 0.5;
-                const offset = i * 20; // phase shift
+                const speed = 4 + i * (10 / numberOfBars);
+                const offset = i * (Math.PI * 2 / numberOfBars);
 
-                // Combine a bass beat (every ~0.5s) and some high freq jitter
-                const beat = Math.sin(time * 10) > 0.5 ? 1 : 0.2;
-                const jitter = Math.random() * 0.3;
+                // Mezcla de frecuencias simuladas con sensibilidad
+                const beat = Math.sin(time * 12 + offset) > 0.8 ? 1.2 : 0.3;
                 const wave = Math.sin(time * speed + offset) * 0.5 + 0.5;
-
-                // Mix them
-                const amplitude = (wave * 0.7 + beat * 0.3 + jitter) * volume;
-
-                const height = Math.min(150, Math.max(10, amplitude * 120));
+                
+                const amplitude = (wave * 0.6 + beat * 0.4) * volume * sensitivity;
+                const height = Math.min(200, Math.max(8, amplitude * 180));
 
                 return (
                     <div
                         key={i}
                         style={{
-                            width: 12,
+                            flex: 1,
                             height: `${height}px`,
-                            backgroundColor: '#3b82f6',
-                            borderRadius: 4,
-                            opacity: 0.8,
-                            transform: `scaleY(${1})`,
+                            backgroundColor: color,
+                            borderRadius: bars > 64 ? 1 : 4,
+                            opacity: 0.6 + (amplitude * 0.4),
+                            boxShadow: amplitude > 0.8 ? `0 0 15px ${color}` : 'none',
+                            transition: 'height 0.1s ease-out'
                         }}
                     />
                 );

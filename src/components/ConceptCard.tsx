@@ -1,6 +1,6 @@
 import React from 'react';
 import { Player } from '@remotion/player';
-import { Copy, Check } from 'lucide-react';
+import { Copy, Check, Download, FileJson } from 'lucide-react';
 import './ConceptCard.css';
 import { useLanguage } from '../i18n/LanguageContext';
 
@@ -34,15 +34,67 @@ export const ConceptCard: React.FC<ConceptCardProps> = ({
         setTimeout(() => setCopied(false), 2000);
     };
 
+    const handleExport = () => {
+        const fullCode = `
+import React from 'react';
+import { AbsoluteFill } from 'remotion';
+// Importa tu composición aquí o usa este fragmento:
+
+const MyCustomComposition = () => {
+  const props = ${JSON.stringify(inputProps, null, 2)};
+  return (
+    <AbsoluteFill>
+      {/* Implementación basada en: ${title} */}
+      {/* Pasa las props: props */}
+    </AbsoluteFill>
+  );
+};
+
+export default MyCustomComposition;
+        `.trim();
+
+        const blob = new Blob([fullCode], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${title.toLowerCase().replace(/\s+/g, '-')}-template.tsx`;
+        a.click();
+        URL.revokeObjectURL(url);
+    };
+
     return (
         <div className="concept-card glass-panel">
             <div className="card-header">
-                <h3 className="card-title">{title}</h3>
-                <p className="card-description">{description}</p>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div>
+                        <h3 className="card-title">{title}</h3>
+                        <p className="card-description">{description}</p>
+                    </div>
+                    <button 
+                        className="export-button" 
+                        onClick={handleExport}
+                        title="Exportar como Plantilla TSX"
+                        style={{
+                            background: 'rgba(59, 130, 246, 0.1)',
+                            border: '1px solid var(--accent)',
+                            color: 'var(--accent)',
+                            padding: '6px 10px',
+                            borderRadius: '6px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            fontSize: '12px',
+                            cursor: 'pointer'
+                        }}
+                    >
+                        <Download size={14} /> Exportar
+                    </button>
+                </div>
             </div>
 
             <div className="player-container" style={{ height }}>
-                <Player
+...
+
                     component={component}
                     durationInFrames={durationInFrames}
                     compositionWidth={600}
