@@ -24,6 +24,7 @@ interface MainLayoutProps {
     activeCategory: string;
     onSelectCategory: (id: string) => void;
 }
+
 export const MainLayout: React.FC<MainLayoutProps> = ({ children, activeCategory, onSelectCategory }) => {
     const { t, language, toggleLanguage } = useLanguage();
 
@@ -42,8 +43,6 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children, activeCategory
             </header>
 
             <aside className="sidebar glass-panel">
-...
-
                 <div className="logo-area">
                     <span className="logo-icon">🎬</span>
                     <h1 className="app-title title-gradient">MotionCheat</h1>

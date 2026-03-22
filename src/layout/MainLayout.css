@@ -160,10 +160,11 @@
     .nav-menu {
         flex-direction: row;
         width: 100%;
-        justify-content: space-between;
-        padding: 0 4px;
-        gap: 0;
-        overflow: hidden; /* Evitar scroll si no es necesario */
+        justify-content: center; /* CENTRADO TOTAL */
+        align-items: center;
+        padding: 0;
+        gap: 4px; /* Pequeño espacio entre iconos */
+        overflow: hidden;
     }
 
     .nav-item {
