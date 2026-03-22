@@ -3,101 +3,118 @@ import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
 
 export const EasingGraph: React.FC<{
     easingName: string;
-}> = ({ easingName }) => {
+    easingMode: string;
+    compareWithName?: string | null;
+}> = ({ easingName, easingMode, compareWithName }) => {
     const frame = useCurrentFrame();
-    const width = 600;
-    const height = 300;
+    const width = 500;
+    const height = 250;
     const duration = 60;
 
-    // Resolve easing function
-    let easingFn = Easing.linear;
-    if (easingName === 'quad') easingFn = Easing.inOut(Easing.quad);
-    if (easingName === 'cubic') easingFn = Easing.inOut(Easing.cubic);
-    if (easingName === 'elastic') easingFn = Easing.out(Easing.elastic(1));
-    if (easingName === 'bounce') easingFn = Easing.out(Easing.bounce);
-    if (easingName === 'bezier') easingFn = Easing.bezier(0.17, 0.67, 0.83, 0.67);
+    const getEasingFn = (name: string, mode: string = 'inOut') => {
+        try {
+            if (name === 'linear') return Easing.linear;
+            
+            // Protección: Verificar si el modo existe en la función de Easing seleccionada
+            const baseEasing = Easing[name as keyof typeof Easing];
+            if (typeof baseEasing === 'function' && mode in Easing) {
+                return (Easing as any)[mode](baseEasing);
+            }
+            
+            // Fallback seguro
+            return Easing.inOut(Easing.quad);
+        } catch (e) {
+            console.warn('Invalid easing configuration:', name, mode);
+            return Easing.linear;
+        }
+    };
 
-    // Calculate current progress
+    const easingFn = getEasingFn(easingName, easingMode);
+    const compareFn = compareWithName ? getEasingFn(compareWithName, 'inOut') : null;
+
     const progress = interpolate(frame % (duration + 20), [0, duration], [0, 1], {
         extrapolateRight: 'clamp',
         easing: easingFn
     });
 
-    // Calculate Linear progress for X axis
-    const linearProgress = interpolate(frame % (duration + 20), [0, duration], [0, 1], {
+    const compareProgress = compareFn ? interpolate(frame % (duration + 20), [0, duration], [0, 1], {
+        extrapolateRight: 'clamp',
+        easing: compareFn
+    }) : null;
+
+    const linearX = interpolate(frame % (duration + 20), [0, duration], [0, 1], {
         extrapolateRight: 'clamp',
     });
 
-    // Generate SVG Path
-    const points = [];
-    for (let i = 0; i <= 100; i++) {
-        const p = i / 100;
-        const val = easingFn(p); // 0 to 1
-        const x = p * width;
-        const y = height - (val * height); // Invert Y for SVG
-        points.push(`${x},${y}`);
-    }
-    const pathData = `M ${points.join(' L ')}`;
+    const generatePath = (fn: (t: number) => number) => {
+        const points = [];
+        for (let i = 0; i <= 100; i++) {
+            const p = i / 100;
+            const val = fn(p);
+            const x = p * width;
+            const y = height - (val * height);
+            points.push(`${x},${y}`);
+        }
+        return `M ${points.join(' L ')}`;
+    };
 
     return (
-        <AbsoluteFill
-            style={{
-                backgroundColor: '#0f172a',
-                justifyContent: 'center',
-                alignItems: 'center',
-            }}
-        >
-            <div style={{ position: 'relative', width, height }}>
-                {/* Grid / Axes */}
-                <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: 1, background: '#334155' }} />
-                <div style={{ position: 'absolute', top: 0, left: 0, width: 1, height: '100%', background: '#334155' }} />
+        <AbsoluteFill style={{ backgroundColor: '#020617', justifyContent: 'center', alignItems: 'center' }}>
+            <div style={{ position: 'relative', width, height, borderLeft: '2px solid #1e293b', borderBottom: '2px solid #1e293b' }}>
+                {/* Gridlines */}
+                {[0.25, 0.5, 0.75].map(v => (
+                    <React.Fragment key={v}>
+                        <div style={{ position: 'absolute', bottom: v * height, width: '100%', height: 1, background: '#1e293b', opacity: 0.5 }} />
+                        <div style={{ position: 'absolute', left: v * width, height: '100%', width: 1, background: '#1e293b', opacity: 0.5 }} />
+                    </React.Fragment>
+                ))}
 
-                {/* The Curve */}
                 <svg width={width} height={height} style={{ overflow: 'visible' }}>
-                    <path d={pathData} fill="none" stroke="#3b82f6" strokeWidth={4} />
+                    {compareFn && (
+                        <path d={generatePath(compareFn)} fill="none" stroke="#6366f1" strokeWidth={2} strokeDasharray="4" opacity={0.5} />
+                    )}
+                    <path d={generatePath(easingFn)} fill="none" stroke="#3b82f6" strokeWidth={4} strokeLinecap="round" />
                 </svg>
 
-                {/* The Ball - moves along the curve */}
-                <div
-                    style={{
-                        position: 'absolute',
-                        left: linearProgress * width - 10, // Moves linearly in time (X)
-                        top: height - (progress * height) - 10, // Moves with easing in value (Y)
-                        width: 20,
-                        height: 20,
-                        borderRadius: '50%',
-                        background: '#ec4899',
-                        boxShadow: '0 0 20px #ec4899',
-                    }}
-                />
+                {/* Main Marker */}
+                <div style={{
+                    position: 'absolute',
+                    left: linearX * width - 8,
+                    top: height - (progress * height) - 8,
+                    width: 16,
+                    height: 16,
+                    borderRadius: '50%',
+                    background: '#3b82f6',
+                    boxShadow: '0 0 15px #3b82f6',
+                    zIndex: 10
+                }} />
 
-                {/* Reference: Linear Ball (for comparison) */}
-                <div
-                    style={{
+                {/* Compare Marker */}
+                {compareProgress !== null && (
+                    <div style={{
                         position: 'absolute',
-                        right: -50,
-                        bottom: linearProgress * height - 10,
-                        width: 10,
-                        height: 10,
+                        left: linearX * width - 6,
+                        top: height - (compareProgress * height) - 6,
+                        width: 12,
+                        height: 12,
                         borderRadius: '50%',
-                        background: '#475569',
-                    }}
-                />
-                <div
-                    style={{
-                        position: 'absolute',
-                        right: -80,
-                        bottom: progress * height - 10,
-                        width: 20,
-                        height: 20,
-                        borderRadius: '50%',
-                        background: '#ec4899',
-                    }}
-                />
+                        background: '#6366f1',
+                        opacity: 0.7
+                    }} />
+                )}
             </div>
 
-            <div style={{ marginTop: 40, color: '#94a3b8' }}>
-                Frame: {(frame % (duration + 20)).toFixed(0)}/{duration} | Value: {progress.toFixed(2)}
+            <div style={{ marginTop: 30, display: 'flex', gap: 20 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <div style={{ width: 12, height: 12, background: '#3b82f6', borderRadius: 2 }} />
+                    <span style={{ color: '#f8fafc', fontSize: 12 }}>{easingName} ({easingMode})</span>
+                </div>
+                {compareWithName && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <div style={{ width: 12, height: 12, background: '#6366f1', borderRadius: 2 }} />
+                        <span style={{ color: '#94a3b8', fontSize: 12 }}>{compareWithName} (inOut)</span>
+                    </div>
+                )}
             </div>
         </AbsoluteFill>
     );

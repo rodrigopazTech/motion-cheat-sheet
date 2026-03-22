@@ -2,74 +2,124 @@ import React, { useState } from 'react';
 import { ConceptCard } from '../components/ConceptCard';
 import { EasingGraph } from '../compositions/EasingGraph';
 import { useLanguage } from '../i18n/LanguageContext';
+import { MousePointer2, GitCompare, Settings2 } from 'lucide-react';
 
 export const EasingContent: React.FC = () => {
     const [easingName, setEasingName] = useState('quad');
+    const [easingMode, setEasingMode] = useState('inOut'); // in, out, inOut
+    const [compareWith, setCompareWith] = useState<string | null>(null);
+    
     const { t } = useLanguage();
 
+    const easingOptions = ['linear', 'quad', 'cubic', 'sine', 'expo', 'elastic', 'bounce'];
+    const modes = ['in', 'out', 'inOut'];
+
+    const getEasingCode = (name: string, mode: string) => {
+        if (name === 'linear') return 'Easing.linear';
+        return `Easing.${mode}(Easing.${name})`;
+    };
+
     return (
-        <div>
+        <div className="easing-lab">
             <ConceptCard
                 title={t('easing.title')}
                 description={t('easing.desc')}
                 component={EasingGraph}
-                inputProps={{ easingName }}
-                durationInFrames={80}
-                height={450}
+                inputProps={{ 
+                    easingName, 
+                    easingMode, 
+                    compareWithName: compareWith 
+                }}
+                durationInFrames={100}
+                height={400}
                 codeSnippet={`import { Easing } from 'remotion';
 
-// Selected: ${easingName}
-const options = {
-  easing: ${getEasingCode(easingName)}
-};
+// Primaria: ${getEasingCode(easingName, easingMode)}
+${compareWith ? `// Comparación: Easing.inOut(Easing.${compareWith})` : ''}
 
-interpolate(frame, [0, 60], [0, 1], options);`}
+const progress = interpolate(frame, [0, 60], [0, 1], {
+  easing: ${getEasingCode(easingName, easingMode)}
+});`}
                 controls={
-                    <>
-                        <div className="control-group">
-                            <label className="control-label">
-                                <span>{t('easing.control.func')}</span>
-                                <span className="control-value" style={{ textTransform: 'capitalize' }}>{easingName}</span>
-                            </label>
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
-                                {['linear', 'quad', 'cubic', 'elastic', 'bounce', 'bezier'].map((t) => (
+                    <div className="advanced-controls">
+                        <div className="control-section">
+                            <div className="control-label" style={{ marginBottom: '12px' }}>
+                                <MousePointer2 size={14} /> <span>Función Principal</span>
+                            </div>
+                            <div className="button-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+                                {easingOptions.map((name) => (
                                     <button
-                                        key={t}
-                                        onClick={() => setEasingName(t)}
+                                        key={name}
+                                        onClick={() => setEasingName(name)}
+                                        className={`preset-btn ${easingName === name ? 'active' : ''}`}
                                         style={{
-                                            padding: '8px 12px',
+                                            background: easingName === name ? 'var(--accent)' : 'rgba(255,255,255,0.05)',
+                                            color: easingName === name ? 'white' : 'var(--text-secondary)',
+                                            border: 'none',
+                                            padding: '8px',
                                             borderRadius: '6px',
-                                            border: '1px solid var(--border)',
-                                            background: easingName === t ? 'var(--accent)' : 'transparent',
-                                            color: easingName === t ? 'white' : 'var(--text-secondary)',
-                                            fontSize: '13px',
-                                            cursor: 'pointer',
-                                            transition: 'all 0.2s',
+                                            fontSize: '12px',
+                                            cursor: 'pointer'
                                         }}
                                     >
-                                        {t.charAt(0).toUpperCase() + t.slice(1)}
+                                        {name}
                                     </button>
                                 ))}
                             </div>
                         </div>
-                        <div style={{ marginTop: 16, fontSize: 13, color: '#94a3b8', lineHeight: 1.5 }}>
-                            <strong>{t('easing.analysis')}</strong><br />
-                            {t(`easing.desc.${easingName}`)}
+
+                        {easingName !== 'linear' && (
+                            <div className="control-section" style={{ marginTop: '20px' }}>
+                                <div className="control-label" style={{ marginBottom: '12px' }}>
+                                    <Settings2 size={14} /> <span>Modo de Aceleración</span>
+                                </div>
+                                <div className="mode-selector" style={{ display: 'flex', gap: '8px' }}>
+                                    {modes.map((mode) => (
+                                        <button
+                                            key={mode}
+                                            onClick={() => setEasingMode(mode)}
+                                            style={{
+                                                flex: 1,
+                                                padding: '8px',
+                                                borderRadius: '6px',
+                                                border: 'none',
+                                                background: easingMode === mode ? '#ec4899' : 'rgba(255,255,255,0.05)',
+                                                color: 'white',
+                                                fontSize: '12px',
+                                                cursor: 'pointer'
+                                            }}
+                                        >
+                                            {mode}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="control-section" style={{ marginTop: '20px', borderTop: '1px solid var(--border)', paddingTop: '20px' }}>
+                            <div className="control-label" style={{ marginBottom: '12px' }}>
+                                <GitCompare size={14} /> <span>Comparar con...</span>
+                            </div>
+                            <select 
+                                onChange={(e) => setCompareWith(e.target.value || null)}
+                                style={{
+                                    width: '100%',
+                                    padding: '10px',
+                                    borderRadius: '6px',
+                                    background: 'rgba(0,0,0,0.2)',
+                                    color: 'white',
+                                    border: '1px solid var(--border)'
+                                }}
+                            >
+                                <option value="">Ninguna</option>
+                                {easingOptions.filter(n => n !== easingName).map(n => (
+                                    <option key={n} value={n}>{n} (InOut)</option>
+                                ))}
+                            </select>
                         </div>
-                    </>
+                    </div>
                 }
             />
         </div>
     );
 };
-
-function getEasingCode(name: string): string {
-    switch (name) {
-        case 'quad': return 'Easing.inOut(Easing.quad)';
-        case 'cubic': return 'Easing.inOut(Easing.cubic)';
-        case 'elastic': return 'Easing.out(Easing.elastic(1))';
-        case 'bounce': return 'Easing.out(Easing.bounce)';
-        case 'bezier': return 'Easing.bezier(0.17, 0.67, 0.83, 0.67)';
-        default: return 'Easing.linear';
-    }
-}
