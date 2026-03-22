@@ -1,6 +1,6 @@
 import React from 'react';
 import { Player } from '@remotion/player';
-import { Copy, Check, Download, FileJson } from 'lucide-react';
+import { Copy, Check, Download } from 'lucide-react';
 import './ConceptCard.css';
 import { useLanguage } from '../i18n/LanguageContext';
 
@@ -38,14 +38,12 @@ export const ConceptCard: React.FC<ConceptCardProps> = ({
         const fullCode = `
 import React from 'react';
 import { AbsoluteFill } from 'remotion';
-// Importa tu composición aquí o usa este fragmento:
 
 const MyCustomComposition = () => {
   const props = ${JSON.stringify(inputProps, null, 2)};
   return (
     <AbsoluteFill>
       {/* Implementación basada en: ${title} */}
-      {/* Pasa las props: props */}
     </AbsoluteFill>
   );
 };
@@ -93,8 +91,7 @@ export default MyCustomComposition;
             </div>
 
             <div className="player-container" style={{ height }}>
-...
-
+                <Player
                     component={component}
                     durationInFrames={durationInFrames}
                     compositionWidth={600}
