@@ -3,7 +3,7 @@ import { ConceptCard } from '../components/ConceptCard';
 import { TypewriterEffect } from '../compositions/TypewriterEffect';
 import { WordHighlight } from '../compositions/WordHighlight';
 import { useLanguage } from '../i18n/LanguageContext';
-import { Type, Settings2, Palette, Activity, Layers } from 'lucide-react';
+import { Type, Settings2, Palette, Activity, Layers, MousePointer2 } from 'lucide-react';
 
 export const TypographyContent: React.FC = () => {
     // Shared State for Lab
@@ -14,7 +14,9 @@ export const TypographyContent: React.FC = () => {
     const [color, setColor] = useState('#10b981');
     const [fontWeight, setFontWeight] = useState('900');
     
+    // Highlight specific state
     const [highlightSpeed, setHighlightSpeed] = useState(10);
+    const [decorationHeight, setDecorationHeight] = useState(100); // 10% to 100%
 
     const { t } = useLanguage();
 
@@ -41,8 +43,7 @@ const chars = Math.floor(frame / ${speed});
 <div style={{ 
   fontSize: "${fontSize}px",
   letterSpacing: "${letterSpacing}px",
-  color: "${color}",
-  fontWeight: "${fontWeight}"
+  color: "${color}"
 }}>
   {text.substring(0, chars)}
 </div>`}
@@ -143,7 +144,7 @@ const chars = Math.floor(frame / ${speed});
                 }
             />
 
-            {/* Word Highlight */}
+            {/* Word Highlight & Underline Studio */}
             <ConceptCard
                 title={t('typography.highlight.title')}
                 description={t('typography.highlight.desc')}
@@ -152,28 +153,51 @@ const chars = Math.floor(frame / ${speed});
                     words: text || "MOTION STUDIO",
                     highlightSpeed,
                     fontSize: fontSize - 20,
-                    color
+                    color,
+                    decorationHeight
                 }}
                 durationInFrames={120}
                 height={300}
-                codeSnippet={`const startFrame = wordIndex * ${highlightSpeed};
-const progress = interpolate(frame, [startFrame, startFrame + 5], [0, 1]);`}
+                codeSnippet={`// decorationHeight: ${decorationHeight}%
+<span style={{ 
+  height: "${decorationHeight}%",
+  backgroundColor: "${color}",
+  bottom: 0 
+}} />`}
                 controls={
                     <div className="advanced-controls">
-                        <div className="control-group">
-                            <label className="control-label">
-                                <Activity size={14} /> <span>Velocidad de Lectura</span>
-                                <span className="control-value">{highlightSpeed}f/palabra</span>
-                            </label>
-                            <input
-                                type="range"
-                                min="5"
-                                max="30"
-                                step="5"
-                                value={highlightSpeed}
-                                style={{ width: '100%' }}
-                                onChange={(e) => setHighlightSpeed(Number(e.target.value))}
-                            />
+                        <div className="control-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                            <div className="control-group">
+                                <label className="control-label">
+                                    <Activity size={14} /> <span>Velocidad</span>
+                                    <span className="control-value">{highlightSpeed}f/word</span>
+                                </label>
+                                <input
+                                    type="range"
+                                    min="5"
+                                    max="30"
+                                    step="5"
+                                    value={highlightSpeed}
+                                    onChange={(e) => setHighlightSpeed(Number(e.target.value))}
+                                />
+                            </div>
+                            <div className="control-group">
+                                <label className="control-label">
+                                    <MousePointer2 size={14} /> <span>Grosor (Marca)</span>
+                                    <span className="control-value">{decorationHeight}%</span>
+                                </label>
+                                <input
+                                    type="range"
+                                    min="10"
+                                    max="100"
+                                    step="10"
+                                    value={decorationHeight}
+                                    onChange={(e) => setDecorationHeight(Number(e.target.value))}
+                                />
+                            </div>
+                        </div>
+                        <div style={{ marginTop: '12px', fontSize: '12px', color: 'var(--text-secondary)' }}>
+                            Tip: Ajusta el grosor al 10-20% para <strong>Subrayado</strong> o al 100% para <strong>Resaltado</strong> completo.
                         </div>
                     </div>
                 }

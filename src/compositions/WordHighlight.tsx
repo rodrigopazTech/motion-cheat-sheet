@@ -6,7 +6,8 @@ export const WordHighlight: React.FC<{
     highlightSpeed: number;
     fontSize: number;
     color: string;
-}> = ({ words, highlightSpeed, fontSize, color }) => {
+    decorationHeight: number; // New prop: 10 to 100
+}> = ({ words, highlightSpeed, fontSize, color, decorationHeight }) => {
     const frame = useCurrentFrame();
     const wordList = words.split(' ');
 
@@ -45,21 +46,21 @@ export const WordHighlight: React.FC<{
                                 zIndex: 1,
                             }}
                         >
-                            {/* Pro Highlighter Effect */}
+                            {/* Pro Decoration Effect (Highlight or Underline) */}
                             <span
                                 style={{
                                     position: 'absolute',
                                     bottom: 0,
                                     left: '-2%',
                                     width: '104%',
-                                    height: '100%',
+                                    height: `${decorationHeight}%`,
                                     backgroundColor: color,
                                     opacity: highlightProgress * 0.8,
                                     zIndex: -1,
-                                    borderRadius: '4px',
+                                    borderRadius: decorationHeight < 30 ? '2px' : '4px',
                                     transform: `scaleX(${highlightProgress})`,
                                     transformOrigin: 'left',
-                                    boxShadow: highlightProgress > 0.8 ? `0 0 20px ${color}` : 'none'
+                                    boxShadow: highlightProgress > 0.8 && decorationHeight > 50 ? `0 0 20px ${color}` : 'none'
                                 }}
                             />
                             {word}
