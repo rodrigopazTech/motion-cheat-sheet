@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { ConceptCard } from '../components/ConceptCard';
 import { TypewriterEffect } from '../compositions/TypewriterEffect';
 import { WordHighlight } from '../compositions/WordHighlight';
+import { GlitchText } from '../compositions/GlitchText';
 import { useLanguage } from '../i18n/LanguageContext';
-import { Type, Settings2, Palette, Activity, Layers, MousePointer2 } from 'lucide-react';
+import { Type, Settings2, Palette, Activity, Layers, MousePointer2, Zap } from 'lucide-react';
 
 export const TypographyContent: React.FC = () => {
     // Shared State for Lab
@@ -16,12 +17,70 @@ export const TypographyContent: React.FC = () => {
     
     // Highlight specific state
     const [highlightSpeed, setHighlightSpeed] = useState(10);
-    const [decorationHeight, setDecorationHeight] = useState(100); // 10% to 100%
+    const [decorationHeight, setDecorationHeight] = useState(100);
+
+    // Glitch specific state
+    const [glitchIntensity, setGlitchIntensity] = useState(0.5);
+    const [rgbOffset, setRgbOffset] = useState(5);
 
     const { t } = useLanguage();
 
     return (
         <div className="typography-lab">
+            {/* Glitch & RGB Split Studio */}
+            <ConceptCard
+                title="Glitch & RGB Split Studio"
+                description="Efecto de distorsión digital con separación de canales cromáticos y desplazamientos aleatorios."
+                component={GlitchText}
+                inputProps={{ 
+                    text: text || "GLITCH", 
+                    fontSize, 
+                    glitchIntensity, 
+                    rgbOffset 
+                }}
+                durationInFrames={120}
+                codeSnippet={`// 1. RGB Split Layers
+<div style={{ color: '#ff0000', transform: "translateX(${-rgbOffset}px)" }} />
+<div style={{ color: '#00ffff', transform: "translateX(${rgbOffset}px)" }} />
+
+// 2. Random Glitch Trigger
+const isGlitching = random(frame) < ${glitchIntensity.toFixed(2)};`}
+                controls={
+                    <div className="advanced-controls">
+                        <div className="control-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                            <div className="control-group">
+                                <label className="control-label">
+                                    <Zap size={14} /> <span>Intensidad Glitch</span>
+                                    <span className="control-value">{(glitchIntensity * 100).toFixed(0)}%</span>
+                                </label>
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max="1"
+                                    step="0.1"
+                                    value={glitchIntensity}
+                                    onChange={(e) => setGlitchIntensity(Number(e.target.value))}
+                                />
+                            </div>
+                            <div className="control-group">
+                                <label className="control-label">
+                                    <Palette size={14} /> <span>RGB Split</span>
+                                    <span className="control-value">{rgbOffset}px</span>
+                                </label>
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max="20"
+                                    step="1"
+                                    value={rgbOffset}
+                                    onChange={(e) => setRgbOffset(Number(e.target.value))}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                }
+            />
+
             {/* Typewriter Studio */}
             <ConceptCard
                 title={t('typography.typewriter.title')}
