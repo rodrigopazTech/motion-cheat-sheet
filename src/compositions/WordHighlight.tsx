@@ -3,8 +3,10 @@ import { AbsoluteFill, useCurrentFrame, interpolate } from 'remotion';
 
 export const WordHighlight: React.FC<{
     words: string;
-    highlightSpeed: number; // frames per word
-}> = ({ words, highlightSpeed }) => {
+    highlightSpeed: number;
+    fontSize: number;
+    color: string;
+}> = ({ words, highlightSpeed, fontSize, color }) => {
     const frame = useCurrentFrame();
     const wordList = words.split(' ');
 
@@ -15,15 +17,12 @@ export const WordHighlight: React.FC<{
                 flexDirection: 'row',
                 justifyContent: 'center',
                 alignItems: 'center',
-                padding: 50,
-                backgroundColor: '#ffffff',
+                padding: 40,
+                backgroundColor: '#020617',
             }}
         >
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '15px', justifyContent: 'center', maxWidth: 1000 }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', justifyContent: 'center', maxWidth: 1000 }}>
                 {wordList.map((word, i) => {
-                    // Determine active state for this word
-                    // Start highlighting at i * highlightSpeed
-                    // Fade in highlight over 5 frames
                     const startFrame = i * highlightSpeed;
 
                     const highlightProgress = interpolate(
@@ -33,34 +32,34 @@ export const WordHighlight: React.FC<{
                         { extrapolateRight: 'clamp' }
                     );
 
-                    // Reset highlight after the word is "read" (optional, keeping it lit for now)
-                    // const isPassed = frame > startFrame + highlightSpeed;
-
                     return (
                         <span
                             key={i}
                             style={{
-                                fontSize: 60,
-                                fontFamily: 'Inter, sans-serif',
-                                fontWeight: 800,
+                                fontSize: `${fontSize}px`,
+                                fontFamily: 'Inter, system-ui, sans-serif',
+                                fontWeight: 900,
                                 position: 'relative',
-                                color: '#1e293b',
+                                color: highlightProgress > 0.5 ? '#ffffff' : 'rgba(255,255,255,0.2)',
+                                transition: 'color 0.1s ease',
                                 zIndex: 1,
                             }}
                         >
-                            {/* Highlight Background */}
+                            {/* Pro Highlighter Effect */}
                             <span
                                 style={{
                                     position: 'absolute',
-                                    bottom: 5,
-                                    left: -5,
-                                    right: -5,
-                                    height: '40%',
-                                    backgroundColor: '#facc15', // Yellow highlighter
-                                    opacity: highlightProgress,
+                                    bottom: 0,
+                                    left: '-2%',
+                                    width: '104%',
+                                    height: '100%',
+                                    backgroundColor: color,
+                                    opacity: highlightProgress * 0.8,
                                     zIndex: -1,
+                                    borderRadius: '4px',
                                     transform: `scaleX(${highlightProgress})`,
                                     transformOrigin: 'left',
+                                    boxShadow: highlightProgress > 0.8 ? `0 0 20px ${color}` : 'none'
                                 }}
                             />
                             {word}

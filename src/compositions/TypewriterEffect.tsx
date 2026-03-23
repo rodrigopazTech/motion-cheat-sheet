@@ -3,16 +3,17 @@ import { AbsoluteFill, useCurrentFrame, useVideoConfig } from 'remotion';
 
 export const TypewriterEffect: React.FC<{
     text: string;
-    speed: number; // frames per character
-}> = ({ text, speed }) => {
+    speed: number;
+    fontSize: number;
+    letterSpacing: number;
+    color: string;
+    fontWeight: string;
+}> = ({ text, speed, fontSize, letterSpacing, color, fontWeight }) => {
     const frame = useCurrentFrame();
     const { fps } = useVideoConfig();
 
-    // Calculate how many characters to show
     const charsToShow = Math.floor(frame / speed);
     const textToShow = text.substring(0, charsToShow);
-
-    // Blinking cursor: simple on/off every 15 frames (0.5s at 30fps)
     const cursorVisible = Math.floor(frame / (fps / 2)) % 2 === 0;
 
     return (
@@ -20,28 +21,32 @@ export const TypewriterEffect: React.FC<{
             style={{
                 justifyContent: 'center',
                 alignItems: 'center',
-                backgroundColor: '#0f172a',
+                backgroundColor: '#020617',
             }}
         >
             <div
                 style={{
                     fontFamily: '"Fira Code", monospace',
-                    fontSize: 80,
-                    color: '#10b981', // Terminal green
-                    fontWeight: 'bold',
+                    fontSize: `${fontSize}px`,
+                    color: color,
+                    fontWeight: fontWeight,
+                    letterSpacing: `${letterSpacing}px`,
                     display: 'flex',
-                    alignItems: 'baseline',
+                    alignItems: 'center',
+                    textAlign: 'center',
+                    padding: '0 40px'
                 }}
             >
                 <span>{textToShow}</span>
                 <span
                     style={{
                         display: 'inline-block',
-                        width: 50,
-                        height: 80,
-                        backgroundColor: '#10b981',
+                        width: fontSize * 0.6,
+                        height: fontSize * 0.9,
+                        backgroundColor: color,
                         marginLeft: 10,
                         opacity: cursorVisible ? 1 : 0,
+                        boxShadow: `0 0 ${fontSize / 4}px ${color}`
                     }}
                 />
             </div>
