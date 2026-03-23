@@ -1,23 +1,20 @@
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, random, interpolate } from 'remotion';
+import { AbsoluteFill, useCurrentFrame, random } from 'remotion';
 
 export const GlitchText: React.FC<{
     text: string;
     fontSize: number;
-    glitchIntensity: number; // 0 to 1
-    rgbOffset: number; // 0 to 20
+    glitchIntensity: number;
+    rgbOffset: number;
 }> = ({ text, fontSize, glitchIntensity, rgbOffset }) => {
     const frame = useCurrentFrame();
 
-    // Generar valores aleatorios para el glitch basados en el frame
-    // Usamos una semilla que cambia solo cuando el glitch "se dispara"
     const seed = Math.floor(frame / 2);
     const isGlitching = random(`glitch-active-${seed}`) < 0.3 * glitchIntensity;
     
     const offsetX = isGlitching ? (random(`x-${seed}`) - 0.5) * 20 * glitchIntensity : 0;
     const offsetY = isGlitching ? (random(`y-${seed}`) - 0.5) * 5 * glitchIntensity : 0;
     
-    // RGB Split: Las capas de color se separan más cuando hay glitch
     const currentRgbOffset = rgbOffset + (isGlitching ? 15 * glitchIntensity : 0);
 
     const textStyle: React.CSSProperties = {
@@ -28,7 +25,8 @@ export const GlitchText: React.FC<{
         position: 'absolute',
         width: '100%',
         textTransform: 'uppercase',
-        letterSpacing: '2px'
+        letterSpacing: '2px',
+        lineHeight: 1
     };
 
     return (
@@ -36,13 +34,21 @@ export const GlitchText: React.FC<{
             style={{
                 justifyContent: 'center',
                 alignItems: 'center',
-                backgroundColor: '#020617',
-                overflow: 'hidden'
+                backgroundColor: '#020617', // Fondo estático sólido
             }}
         >
-            <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            {/* Contenedor del Texto: Aquí se confina el Glitch */}
+            <div style={{ 
+                position: 'relative', 
+                width: '100%', 
+                height: fontSize * 1.5, 
+                display: 'flex', 
+                justifyContent: 'center', 
+                alignItems: 'center',
+                overflow: 'hidden' // ESTO EVITA QUE EL GLITCH SALGA AL FONDO
+            }}>
                 
-                {/* Capa Roja (Desfasada a la izquierda) */}
+                {/* Capa Roja */}
                 <div style={{
                     ...textStyle,
                     color: '#ff0000',
@@ -53,7 +59,7 @@ export const GlitchText: React.FC<{
                     {text}
                 </div>
 
-                {/* Capa Cian (Desfasada a la derecha) */}
+                {/* Capa Cian */}
                 <div style={{
                     ...textStyle,
                     color: '#00ffff',
@@ -64,7 +70,7 @@ export const GlitchText: React.FC<{
                     {text}
                 </div>
 
-                {/* Capa Blanca Principal (Central) */}
+                {/* Capa Blanca Principal */}
                 <div style={{
                     ...textStyle,
                     color: '#ffffff',
@@ -74,18 +80,20 @@ export const GlitchText: React.FC<{
                     {text}
                 </div>
 
-                {/* Efectos de líneas horizontales de glitch aleatorias */}
-                {isGlitching && Array.from({ length: 3 }).map((_, i) => (
+                {/* Líneas de Glitch: Ahora confinadas al contenedor del texto */}
+                {isGlitching && Array.from({ length: 5 }).map((_, i) => (
                     <div
                         key={i}
                         style={{
                             position: 'absolute',
                             width: '100%',
-                            height: random(`h-${seed}-${i}`) * 20,
-                            backgroundColor: 'rgba(255,255,255,0.1)',
+                            height: random(`h-${seed}-${i}`) * (fontSize / 4),
+                            backgroundColor: i % 2 === 0 ? '#ff0000' : '#00ffff',
+                            opacity: 0.3,
                             top: `${random(`t-${seed}-${i}`) * 100}%`,
-                            transform: `translateX(${(random(`tx-${seed}-${i}`) - 0.5) * 100}px)`,
-                            zIndex: 3
+                            transform: `translateX(${(random(`tx-${seed}-${i}`) - 0.5) * (fontSize / 2)}px)`,
+                            zIndex: 3,
+                            mixBlendMode: 'overlay'
                         }}
                     />
                 ))}

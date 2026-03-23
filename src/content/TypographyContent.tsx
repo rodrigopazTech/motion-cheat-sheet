@@ -3,8 +3,9 @@ import { ConceptCard } from '../components/ConceptCard';
 import { TypewriterEffect } from '../compositions/TypewriterEffect';
 import { WordHighlight } from '../compositions/WordHighlight';
 import { GlitchText } from '../compositions/GlitchText';
+import { MaskRevealText } from '../compositions/MaskRevealText';
 import { useLanguage } from '../i18n/LanguageContext';
-import { Type, Settings2, Palette, Activity, Layers, MousePointer2, Zap } from 'lucide-react';
+import { Type, Settings2, Palette, Activity, Layers, MousePointer2, Zap, Eye } from 'lucide-react';
 
 export const TypographyContent: React.FC = () => {
     // Shared State for Lab
@@ -23,10 +24,65 @@ export const TypographyContent: React.FC = () => {
     const [glitchIntensity, setGlitchIntensity] = useState(0.5);
     const [rgbOffset, setRgbOffset] = useState(5);
 
+    // Mask specific state
+    const [revealDir, setRevealDir] = useState<'up' | 'down'>('up');
+
     const { t } = useLanguage();
 
     return (
         <div className="typography-lab">
+            {/* Cinematic Mask Reveal */}
+            <ConceptCard
+                title="Cinematic Mask Reveal"
+                description="Revelación de texto elegante mediante máscaras geométricas y física de muelles."
+                component={MaskRevealText}
+                inputProps={{ 
+                    text: text || "CINEMATIC", 
+                    fontSize, 
+                    color, 
+                    revealDirection: revealDir 
+                }}
+                durationInFrames={90}
+                codeSnippet={`// 1. Mask CSS
+<div style={{ overflow: 'hidden' }}>
+  <h1 style={{ transform: "translateY(\${y}px)" }}>
+    {text}
+  </h1>
+</div>
+
+// 2. Direction: ${revealDir}`}
+                controls={
+                    <div className="advanced-controls">
+                        <div className="control-section">
+                            <div className="control-label" style={{ marginBottom: '12px' }}>
+                                <Eye size={14} /> <span>Dirección de Revelación</span>
+                            </div>
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                                {['up', 'down'].map((dir) => (
+                                    <button
+                                        key={dir}
+                                        onClick={() => setRevealDir(dir as 'up' | 'down')}
+                                        style={{
+                                            flex: 1,
+                                            padding: '10px',
+                                            borderRadius: '8px',
+                                            border: 'none',
+                                            background: revealDir === dir ? 'var(--accent)' : 'rgba(255,255,255,0.05)',
+                                            color: 'white',
+                                            fontSize: '12px',
+                                            cursor: 'pointer',
+                                            textTransform: 'capitalize'
+                                        }}
+                                    >
+                                        Hacia {dir === 'up' ? 'Arriba' : 'Abajo'}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                }
+            />
+
             {/* Glitch & RGB Split Studio */}
             <ConceptCard
                 title="Glitch & RGB Split Studio"
