@@ -4,8 +4,9 @@ import { TypewriterEffect } from '../compositions/TypewriterEffect';
 import { WordHighlight } from '../compositions/WordHighlight';
 import { GlitchText } from '../compositions/GlitchText';
 import { MaskRevealText } from '../compositions/MaskRevealText';
+import { LiquidText } from '../compositions/LiquidText';
 import { useLanguage } from '../i18n/LanguageContext';
-import { Type, Settings2, Palette, Activity, Layers, MousePointer2, Zap, Eye } from 'lucide-react';
+import { Type, Settings2, Palette, Activity, Layers, MousePointer2, Zap, Eye, Waves } from 'lucide-react';
 
 export const TypographyContent: React.FC = () => {
     // Shared State for Lab
@@ -27,10 +28,69 @@ export const TypographyContent: React.FC = () => {
     // Mask specific state
     const [revealDir, setRevealDir] = useState<'up' | 'down'>('up');
 
+    // Liquid specific state
+    const [waveIntensity, setWaveIntensity] = useState(20);
+    const [waveSpeed, setWaveSpeed] = useState(2);
+
     const { t } = useLanguage();
 
     return (
         <div className="typography-lab">
+            {/* Liquid & Wave Distortion Studio */}
+            <ConceptCard
+                title="Liquid & Wave Distortion"
+                description="Efecto de deformación fluida mediante filtros SVG dinámicos (Turbulence & Displacement)."
+                component={LiquidText}
+                inputProps={{ 
+                    text: text || "LIQUID", 
+                    fontSize, 
+                    color, 
+                    waveIntensity, 
+                    waveSpeed 
+                }}
+                durationInFrames={180}
+                codeSnippet={`// 1. SVG Filter Configuration
+<feTurbulence baseFrequency="0.01" seed={frame} />
+<feDisplacementMap scale="${waveIntensity}" />
+
+// 2. CSS Integration
+<h1 style={{ filter: 'url(#liquid-filter)' }}>{text}</h1>`}
+                controls={
+                    <div className="advanced-controls">
+                        <div className="control-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                            <div className="control-group">
+                                <label className="control-label">
+                                    <Waves size={14} /> <span>Intensidad Onda</span>
+                                    <span className="control-value">{waveIntensity}px</span>
+                                </label>
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max="100"
+                                    step="2"
+                                    value={waveIntensity}
+                                    onChange={(e) => setWaveIntensity(Number(e.target.value))}
+                                />
+                            </div>
+                            <div className="control-group">
+                                <label className="control-label">
+                                    <Activity size={14} /> <span>Velocidad</span>
+                                    <span className="control-value">{waveSpeed}x</span>
+                                </label>
+                                <input
+                                    type="range"
+                                    min="0.5"
+                                    max="5"
+                                    step="0.5"
+                                    value={waveSpeed}
+                                    onChange={(e) => setWaveSpeed(Number(e.target.value))}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                }
+            />
+
             {/* Cinematic Mask Reveal */}
             <ConceptCard
                 title="Cinematic Mask Reveal"
